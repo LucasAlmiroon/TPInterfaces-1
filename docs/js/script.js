@@ -40,22 +40,26 @@ document.addEventListener ("DOMContentLoaded", function(){
       dibujando = true;
       ctx.beginPath();
     });
-
+    
     canvas.addEventListener("mousemove", e => {
-        if (dibujando) {
-          let m = oMousePos(canvas, e);
+      if (dibujando) {
+        let m = oMousePos(canvas, e);
+        if (lapizActivo){
           ctx.lineTo(m.x, m.y);
-          if (lapizActivo){
-            let color = document.querySelector("#colorLapiz").value;
-            ctx.strokeStyle = color;
-          }
+          let color = document.querySelector("#colorLapiz").value;
+          ctx.strokeStyle = color;
           ctx.stroke();
+        }else if (gomaActiva){
+          ctx.fillStyle ="white";
+          let rangogoma = document.querySelector("#rangogoma");
+          ctx.fillRect(m.x,m.y,rangogoma.value,rangogoma.value);
         }
-    });
-
-    canvas.addEventListener('mouseup', e => {
-      dibujando = false;
-    });
+        }
+      });
+      
+      canvas.addEventListener('mouseup', e => {
+        dibujando = false;
+      });
   
   }
 
@@ -72,22 +76,7 @@ document.addEventListener ("DOMContentLoaded", function(){
     lapizActivo = false;
     gomaActiva = true;
     changeToCursor1();
-    canvas.addEventListener('mousedown', e => {
-      borrando = true;
-    });
-
-    canvas.addEventListener("mousemove", e => {
-        if (borrando) {
-          let m = oMousePos(canvas, e);   
-          ctx.fillStyle ="white";
-          let rangogoma = document.querySelector("#rangogoma");
-          ctx.fillRect(m.x,m.y,rangogoma.value,rangogoma.value);
-        }
-    });
-
-    canvas.addEventListener('mouseup', e => {
-      borrando = false;
-    });
+    herramientas(borrando);
   }
 
   function cargarImagen(e){
