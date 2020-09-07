@@ -21,23 +21,23 @@
                         <input type="file" class="custom-file-input" id="inputGroupFile01">
                         <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                         <button class="dropdown-item" type="button" id ="nuevo">Nuevo</button>
-                        <button class="dropdown-item" type="button">Guardar</button>
+                        <button class="dropdown-item" type="button" id="guardar">Guardar</button> 
+                      </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-sm">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Herramientas</button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                  <button class="dropdown-item" type="button" id = "lapiz">Lapiz</button>
-                  <button class="dropdown-item" type="button" id = "goma">Goma</button>
-                </div>
+                  </div>
+                  <div class="col-sm">
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Herramientas</button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <button class="dropdown-item" type="button" id = "lapiz">Lapiz</button>
+                        <button class="dropdown-item" type="button" id = "goma">Goma</button>
+                      </div>
               </div>
-          </div>
+            </div>
           <div class="col-sm">
             <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Filtros
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Filtros
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                   <button class="dropdown-item" type="button" id = "filtronegativo">Negativo</button>
@@ -50,8 +50,9 @@
         </div>
       </div>
     
-      <canvas id = "canvas" width="500" height="500" style="border: black solid 1px"></canvas>
-      <label for="input">Seleciona el color del lapiz <input type="color" id="colorLapiz"></label>
-
-</body>
+      <canvas id = "canvas" width="800" height="500" style="border: black solid 1px"></canvas>
+      <label for="input">Selecciona el color del lapiz <input type="color" id="colorLapiz"></label>
+      <label for="rango">Selecciona tamaño de la goma <input type="range" name="gomadeborrar" id="rangogoma"></label>
+      
+    </body>
 </html>

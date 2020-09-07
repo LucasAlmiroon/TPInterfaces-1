@@ -4,7 +4,7 @@ document.addEventListener ("DOMContentLoaded", function(){
   let ctx = canvas.getContext("2d");
   let input = document.querySelector('#inputGroupFile01');
   let nuevo = document.querySelector('#nuevo');
-  let guardar = document.querySelector("#descargar");
+  let guardar = document.querySelector("#guardar");
   let lapiz = document.querySelector("#lapiz");
   let goma = document.querySelector("#goma");
   let botonfiltrogris = document.querySelector("#filtrogris");
@@ -48,8 +48,6 @@ document.addEventListener ("DOMContentLoaded", function(){
           if (lapizActivo){
             let color = document.querySelector("#colorLapiz").value;
             ctx.strokeStyle = color;
-          }else{
-            ctx.strokeStyle = "white";
           }
           ctx.stroke();
         }
@@ -62,9 +60,9 @@ document.addEventListener ("DOMContentLoaded", function(){
   }
 
   function dibujar(){
+    let dibujando = false;
     lapizActivo = true;
     gomaActiva = false;
-    let dibujando = false;
     changeToCursor1();
     herramientas(dibujando);
   }
@@ -74,7 +72,22 @@ document.addEventListener ("DOMContentLoaded", function(){
     lapizActivo = false;
     gomaActiva = true;
     changeToCursor1();
-    herramientas(borrando);
+    canvas.addEventListener('mousedown', e => {
+      borrando = true;
+    });
+
+    canvas.addEventListener("mousemove", e => {
+        if (borrando) {
+          let m = oMousePos(canvas, e);   
+          ctx.fillStyle ="white";
+          let rangogoma = document.querySelector("#rangogoma");
+          ctx.fillRect(m.x,m.y,rangogoma.value,rangogoma.value);
+        }
+    });
+
+    canvas.addEventListener('mouseup', e => {
+      borrando = false;
+    });
   }
 
   function cargarImagen(e){
@@ -226,11 +239,26 @@ document.addEventListener ("DOMContentLoaded", function(){
 
   function getBlue(index,imageData){
       return  imageData.data[index + 2];
-  }       
+  }
+
+  function descargar(){	
+    var dataURL = canvas.toDataURL("image/jpeg", 1.0);
+
+    downloadImage(dataURL, 'imagen.jpeg');
+  }
+
+  function downloadImage(data, filename = 'untitled.jpeg') {
+      var a = document.createElement('a');
+      a.href = data;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+  }
 
   canvasNuevo();
+  
   nuevo.addEventListener('click',canvasNuevo);
-  /*guardar.addEventListener('click',descargar);*/
+  guardar.addEventListener("click",descargar);
   lapiz.addEventListener('click',dibujar);
   goma.addEventListener('click',gomaBorrar);
   botonfiltrogris.addEventListener('click',aplicarFiltroGris);
