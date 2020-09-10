@@ -3,14 +3,6 @@ document.addEventListener ("DOMContentLoaded", function(){
   let canvas = document.querySelector("#canvas");
   let ctx = canvas.getContext("2d");
   let input = document.querySelector('#inputGroupFile01');
-  let nuevo = document.querySelector('#nuevo');
-  let guardar = document.querySelector("#guardar");
-  let lapiz = document.querySelector("#lapiz");
-  let goma = document.querySelector("#goma");
-  let botonfiltrogris = document.querySelector("#filtrogris");
-  let botonfiltronegativo = document.querySelector("#filtronegativo");
-  let botonfiltrosepia = document.querySelector("#filtrosepia");
-  let botonfiltrobinario = document.querySelector("#filtrobinario");
   let cw = canvas.width;
   let ch = canvas.height;
   let gomaActiva = false;
@@ -152,20 +144,22 @@ document.addEventListener ("DOMContentLoaded", function(){
     let w = imageData.width;
     let h = imageData.height;
     for (let x = 0; x < w; x++){
-        for (let y = 0; y < h; y++){
-            let index = (x + w * y)*4;
-            let r = getRed(index,imageData);
-            let g = getGreen(index,imageData);
-            let b = getBlue(index,imageData);
-            
-            let sepia = ((0.3 * r) + (0.6* g) + (0.1* b))
-            
-            imageData.data[index + 0] = Math.min(sepia + 40,255);
-            imageData.data[index + 1] = Math.min(sepia + 15,255);
-            imageData.data[index + 2] = sepia;
-            
-            ctx.putImageData(imageData, 0, 0);            
-        }
+        
+      for (let y = 0; y < h; y++){
+      
+        let index = (x + w * y)*4;
+        let r = getRed(index,imageData);
+        let g = getGreen(index,imageData);
+        let b = getBlue(index,imageData);
+        
+        let sepia = ((0.3 * r) + (0.6* g) + (0.1* b))
+        
+        imageData.data[index + 0] = Math.min(sepia + 40,255);
+        imageData.data[index + 1] = Math.min(sepia + 15,255);
+        imageData.data[index + 2] = sepia;
+        
+        ctx.putImageData(imageData, 0, 0);            
+      }
     }
   }
 
@@ -245,13 +239,13 @@ document.addEventListener ("DOMContentLoaded", function(){
   }
 
   canvasNuevo();
+  document.querySelector('#nuevo').addEventListener('click',canvasNuevo);
+  document.querySelector("#guardar").addEventListener("click",descargar);
+  document.querySelector("#lapiz").addEventListener('click',dibujar);
+  document.querySelector("#goma").addEventListener('click',gomaBorrar);
+  document.querySelector("#filtrogris").addEventListener('click',aplicarFiltroGris);
+  document.querySelector("#filtronegativo").addEventListener('click',aplicarFiltroNegativo);
+  document.querySelector("#filtrosepia").addEventListener('click',aplicarFiltroSepia);
+  document.querySelector("#filtrobinario").addEventListener('click',aplicarFiltroBinario);
   
-  nuevo.addEventListener('click',canvasNuevo);
-  guardar.addEventListener("click",descargar);
-  lapiz.addEventListener('click',dibujar);
-  goma.addEventListener('click',gomaBorrar);
-  botonfiltrogris.addEventListener('click',aplicarFiltroGris);
-  botonfiltronegativo.addEventListener('click',aplicarFiltroNegativo);
-  botonfiltrosepia.addEventListener('click',aplicarFiltroSepia);
-  botonfiltrobinario.addEventListener('click',aplicarFiltroBinario);
 });
