@@ -7,9 +7,75 @@ document.addEventListener ("DOMContentLoaded", function(){
   let ch = canvas.height;
   let gomaActiva = false;
   let lapizActivo = false;
+  let dataImgAnterior;
+  let filtroAplicado = false;
   
-
+  function verificarFiltro(){
+    if (filtroAplicado){
+      ctx.putImageData(dataImgAnterior,0,0);
+    }else{
+      filtroAplicado = true;
+    }
+  }
+  
   input.onchange = e =>{cargarImagen(e)}
+
+  function cargarImagen(e){
+    let file = e.target.files[0];
+    
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    
+    reader.onload = readerEvent => {
+      let content = readerEvent.target.result;
+      
+      let image = new Image();
+      
+      image.src = content;
+      
+      image.onload = function(){
+      
+        canvas.width = this.width;
+        canvas.height = this.height;
+
+        ctx.drawImage(image,0,0,canvas.width,canvas.height);
+        dataImgAnterior = ctx.getImageData(0,0,canvas.width,canvas.height);
+
+      }
+    }
+  }
+    
+  function canvasNuevo(){
+    input.value= '';
+    let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    for(let x = 0; x <= canvas.width; x++){
+      for (let y = 0; y <= canvas.height; y++){
+        let index = (x*imageData.width*y)*4;
+        imageData.data[index + 0] = 255;
+        imageData.data[index + 1] = 255;
+        imageData.data[index + 2] = 255;
+      }
+    }
+    ctx.putImageData(imageData,0,0);
+    canvas.width = cw;
+    canvas.height = ch;
+    ctx.fillStyle ="white";
+    ctx.fillRect(0,0,cw,ch);
+  }
+
+  function descargar(){	
+    var dataURL = canvas.toDataURL("image/jpeg", 1.0);
+    
+    downloadImage(dataURL, 'imagen.jpeg');
+  }
+  
+  function downloadImage(data, filename = 'untitled.jpeg') {
+    let a = document.createElement('a');
+    a.href = data;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+  }
   
   function oMousePos(canvas, e) {
     let ClientRect = canvas.getBoundingClientRect();
@@ -46,15 +112,15 @@ document.addEventListener ("DOMContentLoaded", function(){
           let rangogoma = document.querySelector("#rangogoma");
           ctx.fillRect(m.x,m.y,rangogoma.value,rangogoma.value);
         }
-        }
-      });
-      
-      canvas.addEventListener('mouseup', e => {
-        dibujando = false;
-      });
-  
+      }
+    });
+    
+    canvas.addEventListener('mouseup', e => {
+      dibujando = false;
+    });
+    
   }
-
+  
   function dibujar(){
     let dibujando = false;
     lapizActivo = true;
@@ -70,83 +136,79 @@ document.addEventListener ("DOMContentLoaded", function(){
     changeToCursor1();
     herramientas(borrando);
   }
-
-  function cargarImagen(e){
-    let file = e.target.files[0];
     
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    
-    reader.onload = readerEvent => {
-      let content = readerEvent.target.result;
-      
-      let image = new Image();
-      
-      image.src = content;
-      
-      image.onload = function(){
-      
-        canvas.width = this.width;
-        canvas.height = this.height;
-
-        ctx.drawImage(image,0,0,canvas.width,canvas.height);
-
-      }
-    }
+  function getRed(index,imageData){
+    return  imageData.data[index + 0];
   }
 
+  function getGreen(index,imageData){
+    return  imageData.data[index + 1];
+  }
+    
+  function getBlue(index,imageData){
+    return  imageData.data[index + 2];
+  }
+  
   function aplicarFiltroNegativo(){
+    
+    verificarFiltro();
     
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
     let w = imageData.width;
     let h = imageData.height;
     for (let x = 0; x < w; x++){
-        for (let y = 0; y < h; y++){
-            let index = (x + w * y)*4;
-            let r = getRed(index,imageData);
-            let g = getGreen(index,imageData);
-            let b = getBlue(index,imageData);
-            
-            
-            imageData.data[index + 0] = 255 - r;
-            imageData.data[index + 1] = 255 - g;
-            imageData.data[index + 2] = 255 - b;
-            
-            ctx.putImageData(imageData, 0, 0);          
-        }
+      for (let y = 0; y < h; y++){
+        let index = (x + w * y)*4;
+        let r = getRed(index,imageData);
+        let g = getGreen(index,imageData);
+        let b = getBlue(index,imageData);
+        
+        
+        imageData.data[index + 0] = 255 - r;
+        imageData.data[index + 1] = 255 - g;
+        imageData.data[index + 2] = 255 - b;
+        
+      }
     }
+    ctx.putImageData(imageData, 0, 0);          
   }
 
   function aplicarFiltroGris(){
+
+    verificarFiltro();
+
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
     let w = imageData.width;
     let h = imageData.height;
     for (let x = 0; x < w; x++){
-        for (let y = 0; y < h; y++){
-            let index = (x + w * y)*4;
-            let r = getRed(index,imageData);
-            let g = getGreen(index,imageData);
-            let b = getBlue(index,imageData);
-            
-            let gris = (r+g+b)/3;
-            
-            imageData.data[index + 0] = gris;
-            imageData.data[index + 1] = gris;
-            imageData.data[index + 2] = gris;
-            
-            ctx.putImageData(imageData, 0, 0);            
-        }
+      for (let y = 0; y < h; y++){
+        let index = (x + w * y)*4;
+        let r = getRed(index,imageData);
+        let g = getGreen(index,imageData);
+        let b = getBlue(index,imageData);
+        
+        let gris = (r+g+b)/3;
+        
+        imageData.data[index + 0] = gris;
+        imageData.data[index + 1] = gris;
+        imageData.data[index + 2] = gris;
+        
+      }
     }
+    ctx.putImageData(imageData, 0, 0);            
   }
 
   function aplicarFiltroSepia(){
+
+    verificarFiltro();
+
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
     let w = imageData.width;
     let h = imageData.height;
     for (let x = 0; x < w; x++){
-        
-      for (let y = 0; y < h; y++){
       
+      for (let y = 0; y < h; y++){
+        
         let index = (x + w * y)*4;
         let r = getRed(index,imageData);
         let g = getGreen(index,imageData);
@@ -158,12 +220,15 @@ document.addEventListener ("DOMContentLoaded", function(){
         imageData.data[index + 1] = Math.min(sepia + 15,255);
         imageData.data[index + 2] = sepia;
         
-        ctx.putImageData(imageData, 0, 0);            
       }
     }
+    ctx.putImageData(imageData, 0, 0);            
   }
-
+  
   function aplicarFiltroBinario(){
+    
+    verificarFiltro();
+    
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
     let w = imageData.width;
     let h = imageData.height;
@@ -176,73 +241,81 @@ document.addEventListener ("DOMContentLoaded", function(){
         let r = getRed(index,imageData);
         let g = getGreen(index,imageData);
         let b = getBlue(index,imageData);
-
+        
         if (((r + g + b)/3) <= 127){
           
           imageData.data[index + 0] = 0;
           imageData.data[index + 1] = 0;
           imageData.data[index + 2] = 0;
-        
+          
         }else{
-        
+          
           imageData.data[index + 0] = 255;
           imageData.data[index + 1] = 255;
           imageData.data[index + 2] = 255;
         }
-        ctx.putImageData(imageData, 0, 0);
       }
     }
+    ctx.putImageData(imageData, 0, 0);
   }
-  
-  function canvasNuevo(){
-    input.value= '';
+
+  function cambiarContraste(){
+
+    verificarFiltro();
+
+    let rango = document.querySelector("#rangocontraste").value*1.0;
+    let activo = true;
+    let contraste = Math.tan(rango * Math.PI / 180.0);
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-    for(let x = 0; x <= canvas.width; x++){
-      for (let y = 0; y <= canvas.height; y++){
-        let index = (x*imageData.width*y)*4;
-        imageData.data[index + 0] = 255;
-        imageData.data[index + 1] = 255;
-        imageData.data[index + 2] = 255;
-        ctx.putImageData(imageData,x,y);
-      }
+
+    for (y=0;y<canvas.height;y++){
+        for (x=0;x<canvas.width;x++){
+            index=(x+y*imageData.width)*4;
+            imageData.data[index+0]=rangeColor(128 + (imageData.data[index + 0] - 128) * contraste);
+            imageData.data[index+1]=rangeColor(128 + (imageData.data[index + 1] - 128) * contraste);
+            imageData.data[index+2]=rangeColor(128 + (imageData.data[index + 2] - 128) * contraste);
+        }
     }
-    canvas.width = cw;
-    canvas.height = ch;
-    ctx.fillStyle ="white";
-    ctx.fillRect(0,0,cw,ch);
+    
+    ctx.putImageData(imageData,0,0);
   }
 
-  function getRed(index,imageData){
-      return  imageData.data[index + 0];
+  function cambiarBrillo(){
+
+    verificarFiltro();
+
+    let k = document.querySelector("#rangobrillo").value*1.0;
+    let activo = true;
+    let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+
+    for (y=0;y<canvas.height;y++){
+        for (x=0;x<canvas.width;x++){
+            index=(x+y*imageData.width)*4;
+            imageData.data[index+0]=rangeColor(imageData.data[index + 0] + k);
+            imageData.data[index+1]=rangeColor(imageData.data[index + 1] + k);
+            imageData.data[index+2]=rangeColor(imageData.data[index + 2] + k);
+        }
+    }
+    
+    ctx.putImageData(imageData,0,0);
   }
 
-  function getGreen(index,imageData){
-      return  imageData.data[index + 1];
+  function rangeColor(pixel) {
+
+    if (pixel < 0)
+        pixel = 0;
+    if (pixel > 255)
+        pixel = 255;
+
+    return pixel;
   }
-
-  function getBlue(index,imageData){
-      return  imageData.data[index + 2];
-  }
-
-  function descargar(){	
-    var dataURL = canvas.toDataURL("image/jpeg", 1.0);
-
-    downloadImage(dataURL, 'imagen.jpeg');
-  }
-
-  function downloadImage(data, filename = 'untitled.jpeg') {
-      var a = document.createElement('a');
-      a.href = data;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-  }
-
   canvasNuevo();
   document.querySelector('#nuevo').addEventListener('click',canvasNuevo);
   document.querySelector("#guardar").addEventListener("click",descargar);
   document.querySelector("#lapiz").addEventListener('click',dibujar);
   document.querySelector("#goma").addEventListener('click',gomaBorrar);
+  document.querySelector("#rangocontraste").addEventListener('change',cambiarContraste);
+  document.querySelector("#rangobrillo").addEventListener('change',cambiarBrillo);
   document.querySelector("#filtrogris").addEventListener('click',aplicarFiltroGris);
   document.querySelector("#filtronegativo").addEventListener('click',aplicarFiltroNegativo);
   document.querySelector("#filtrosepia").addEventListener('click',aplicarFiltroSepia);
