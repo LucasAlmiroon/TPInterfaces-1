@@ -1,3 +1,5 @@
+"use strict";
+
 document.addEventListener ("DOMContentLoaded", function(){
 
   let canvas = document.querySelector("#canvas");
