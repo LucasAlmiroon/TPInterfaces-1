@@ -11,6 +11,7 @@ document.addEventListener ("DOMContentLoaded", function(){
   let filtroAplicado = false;
   
   function verificarFiltro(){
+  
     if (filtroAplicado){
       ctx.putImageData(dataImgAnterior,0,0);
     }else{
@@ -40,6 +41,7 @@ document.addEventListener ("DOMContentLoaded", function(){
 
         ctx.drawImage(image,0,0,canvas.width,canvas.height);
         dataImgAnterior = ctx.getImageData(0,0,canvas.width,canvas.height);
+        input.value= '';
 
       }
     }
@@ -47,15 +49,20 @@ document.addEventListener ("DOMContentLoaded", function(){
     
   function canvasNuevo(){
     input.value= '';
+    
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    
     for(let x = 0; x <= canvas.width; x++){
+    
       for (let y = 0; y <= canvas.height; y++){
+    
         let index = (x*imageData.width*y)*4;
         imageData.data[index + 0] = 255;
         imageData.data[index + 1] = 255;
         imageData.data[index + 2] = 255;
       }
     }
+    
     ctx.putImageData(imageData,0,0);
     canvas.width = cw;
     canvas.height = ch;
@@ -101,13 +108,18 @@ document.addEventListener ("DOMContentLoaded", function(){
     
     canvas.addEventListener("mousemove", e => {
       if (dibujando) {
+        
         let m = oMousePos(canvas, e);
+        
         if (lapizActivo){
+        
           ctx.lineTo(m.x, m.y);
           let color = document.querySelector("#colorLapiz").value;
           ctx.strokeStyle = color;
           ctx.stroke();
+        
         }else if (gomaActiva){
+        
           ctx.fillStyle ="white";
           let rangogoma = document.querySelector("#rangogoma");
           ctx.fillRect(m.x,m.y,rangogoma.value,rangogoma.value);
@@ -122,6 +134,7 @@ document.addEventListener ("DOMContentLoaded", function(){
   }
   
   function dibujar(){
+    
     let dibujando = false;
     lapizActivo = true;
     gomaActiva = false;
@@ -130,6 +143,7 @@ document.addEventListener ("DOMContentLoaded", function(){
   }
 
   function gomaBorrar(){
+    
     let borrando = false;
     lapizActivo = false;
     gomaActiva = true;
@@ -156,8 +170,11 @@ document.addEventListener ("DOMContentLoaded", function(){
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
     let w = imageData.width;
     let h = imageData.height;
+    
     for (let x = 0; x < w; x++){
+    
       for (let y = 0; y < h; y++){
+    
         let index = (x + w * y)*4;
         let r = getRed(index,imageData);
         let g = getGreen(index,imageData);
@@ -180,8 +197,11 @@ document.addEventListener ("DOMContentLoaded", function(){
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
     let w = imageData.width;
     let h = imageData.height;
+
     for (let x = 0; x < w; x++){
+      
       for (let y = 0; y < h; y++){
+      
         let index = (x + w * y)*4;
         let r = getRed(index,imageData);
         let g = getGreen(index,imageData);
@@ -264,13 +284,12 @@ document.addEventListener ("DOMContentLoaded", function(){
     verificarFiltro();
 
     let rango = document.querySelector("#rangocontraste").value*1.0;
-    let activo = true;
     let contraste = Math.tan(rango * Math.PI / 180.0);
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
 
     for (y=0;y<canvas.height;y++){
         for (x=0;x<canvas.width;x++){
-            index=(x+y*imageData.width)*4;
+            let index=(x+y*imageData.width)*4;
             imageData.data[index+0]=rangeColor(128 + (imageData.data[index + 0] - 128) * contraste);
             imageData.data[index+1]=rangeColor(128 + (imageData.data[index + 1] - 128) * contraste);
             imageData.data[index+2]=rangeColor(128 + (imageData.data[index + 2] - 128) * contraste);
@@ -285,12 +304,11 @@ document.addEventListener ("DOMContentLoaded", function(){
     verificarFiltro();
 
     let k = document.querySelector("#rangobrillo").value*1.0;
-    let activo = true;
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
 
     for (y=0;y<canvas.height;y++){
         for (x=0;x<canvas.width;x++){
-            index=(x+y*imageData.width)*4;
+            let index=(x+y*imageData.width)*4;
             imageData.data[index+0]=rangeColor(imageData.data[index + 0] + k);
             imageData.data[index+1]=rangeColor(imageData.data[index + 1] + k);
             imageData.data[index+2]=rangeColor(imageData.data[index + 2] + k);
@@ -309,6 +327,7 @@ document.addEventListener ("DOMContentLoaded", function(){
 
     return pixel;
   }
+
   canvasNuevo();
   document.querySelector('#nuevo').addEventListener('click',canvasNuevo);
   document.querySelector("#guardar").addEventListener("click",descargar);
