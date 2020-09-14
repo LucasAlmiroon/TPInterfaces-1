@@ -264,12 +264,12 @@ document.addEventListener ("DOMContentLoaded", function(){
     verificarFiltro();
 
     let rango = document.querySelector("#rangocontraste").value*1.0;
-    let activo = true;
+
     let contraste = Math.tan(rango * Math.PI / 180.0);
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
 
-    for (y=0;y<canvas.height;y++){
-        for (x=0;x<canvas.width;x++){
+    for (let y=0;y<canvas.height;y++){
+        for (let x=0;x<canvas.width;x++){
             index=(x+y*imageData.width)*4;
             imageData.data[index+0]=rangeColor(128 + (imageData.data[index + 0] - 128) * contraste);
             imageData.data[index+1]=rangeColor(128 + (imageData.data[index + 1] - 128) * contraste);
@@ -285,11 +285,10 @@ document.addEventListener ("DOMContentLoaded", function(){
     verificarFiltro();
 
     let k = document.querySelector("#rangobrillo").value*1.0;
-    let activo = true;
     let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
 
-    for (y=0;y<canvas.height;y++){
-        for (x=0;x<canvas.width;x++){
+    for (let y=0;y<canvas.height;y++){
+        for (let x=0;x<canvas.width;x++){
             index=(x+y*imageData.width)*4;
             imageData.data[index+0]=rangeColor(imageData.data[index + 0] + k);
             imageData.data[index+1]=rangeColor(imageData.data[index + 1] + k);
